@@ -1,7 +1,6 @@
 package rwlock
 
 import (
-	"context"
 	"time"
 )
 
@@ -24,10 +23,6 @@ type Options struct {
 	// Default: 10 milliseconds
 	RetryInterval time.Duration
 
-	// Context of the execution.
-	// Default: Background
-	Context context.Context
-
 	// AppID is used as writer lock token prefix.
 	// Used for debugging.
 	AppID string
@@ -48,8 +43,10 @@ type Mode int
 const (
 	// ModeUndefined will trigger default option to be used.
 	ModeUndefined Mode = iota
+
 	// ModePreferReader makes the writer and reader to have equal priority.
 	ModePreferReader
+
 	// ModePreferWriter makes the writer to have higher priority over the reader.
 	ModePreferWriter
 )
@@ -86,10 +83,6 @@ func prepareOpts(opts *Options) {
 	}
 	if opts.RetryInterval < retryIntervalMin {
 		opts.RetryInterval = retryIntervalMin
-	}
-
-	if opts.Context == nil {
-		opts.Context = context.Background()
 	}
 
 	if len(opts.ReaderLockToken) == 0 {
